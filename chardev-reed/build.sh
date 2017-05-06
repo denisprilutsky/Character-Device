@@ -4,6 +4,6 @@ clear
 
 make clean
 
-make -C /usr/src/linux-$(uname -r) SUBDIRS=$PWD modules
+make all
 
 /sbin/insmod *.ko
