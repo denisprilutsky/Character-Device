@@ -33,11 +33,12 @@ static int Device_Open = 0;   /* Устройство открыто?
 static char msg[BUF_LEN];     /* Здесь будет собираться текст сообщения */
 static char *msg_Ptr;
 
-static struct file_operations fops = {
-  .read = device_read,
-  .write = device_write,
-  .open = device_open,
-  .release = device_release
+static struct file_operations fops =
+{
+	.read = device_read,
+	.write = device_write,
+	.open = device_open,
+	.release = device_release
 };
 
 /*
@@ -101,24 +102,25 @@ static int device_open(struct inode *inode, struct file *file)
  */
 static int device_release(struct inode *inode, struct file *file)
 {
-  Device_Open--;                /* Теперь мы готовы обслужить другой процесс */
+	Device_Open--;                /* Теперь мы готовы обслужить другой процесс */
 
-  /* 
-   * Уменьшить счетчик обращений, иначе, после первой же удачной попытки открыть файл устройства,
-   * вы никогда не сможете выгрузить модуль. 
-   */
-  module_put(THIS_MODULE);
+	/* 
+	* Уменьшить счетчик обращений, иначе, после первой же удачной попытки открыть файл устройства,
+	* вы никогда не сможете выгрузить модуль. 
+	*/
+	module_put(THIS_MODULE);
 
-  return 0;
+	return 0;
 }
 
 /* 
  * Вызывается, когда процесс пытается прочитать уже открытый файл устройства
  */
-static ssize_t device_read(struct file *filp, /* см. include/linux/fs.h   */
-         char *buffer,                        /* буфер, куда надо положить данные */
-         size_t length,                       /* размер буфера */
-         loff_t * offset)
+static ssize_t device_read(
+	struct file *filp,	/* см. include/linux/fs.h   */
+	char *buffer,		/* буфер, куда надо положить данные */
+	size_t length,		/* размер буфера */
+	loff_t * offset )
 {
 	/*
 	* Количество байт, фактически записанных в буфер
@@ -161,8 +163,7 @@ static ssize_t device_read(struct file *filp, /* см. include/linux/fs.h   */
  * Вызывается, когда процесс пытается записать в устройство, 
  * например так: echo "hi" > /dev/chardev
  */
-static ssize_t
-device_write(struct file *filp, const char *buff, size_t len, loff_t * off)
+static ssize_t device_write(struct file *filp, const char *buff, size_t len, loff_t * off)
 {
 	printk("<1>Sorry, this operation isn't supported.\n");
 	return -EINVAL;
